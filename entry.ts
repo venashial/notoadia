@@ -21,7 +21,7 @@ interface FilteredAssignment {
 const hourInterval = JSON.parse(env.INTERVAL_MINUTES) / 60
 
 // Run routine every 2 hours
-cron(`0 */${hourInterval} * * * *`, async () => {
+cron(`1 1 */${hourInterval} * * *`, async () => {
     await routine()
 })
 
