@@ -1,9 +1,10 @@
 import {config} from "https://deno.land/x/dotenv@v3.1.0/mod.ts"
 import {cron} from 'https://deno.land/x/deno_cron@v1.0.0/cron.ts'
 
-const env = config({
-    safe: true
-})
+const env = {
+    ...config({safe: true}),
+    ...Deno.env.toObject(),
+}
 
 interface Assignment {
     description: string | null
