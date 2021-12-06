@@ -14,7 +14,7 @@ it will then parse the text into a machine-readable object.
 
 > This is where the code becomes very use-case specific. Notoadia is designed for assignments based on taking notes from a textbook. If you want to use Notoadia for other needs, you will need to fork this project or create a PR which generalizes this logic.
 
-First, a message is sent to Discord, delimiting teh start of the pages which will be subsequently sent. The assignment's
+First, a message is sent to Discord, delimiting the start of the pages which will be subsequently sent. The assignment's
 page range is used to find the correct pages from the book, in the `book.json`
 file. The pages are then prepared in Discord's markdown formatting, split up, and sent in the form of embeds. A final
 message is sent with all the information about the assignment and a link to the first delimiting message.
