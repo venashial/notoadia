@@ -6,9 +6,9 @@ const hourInterval = JSON.parse(env.INTERVAL_MINUTES) / 60
 
 // Run routine based in interval from env vars
 export function start(): void {
-    cron(`1 1 */${hourInterval} * * *`, async () => {
-        await routine()
-    })
+  cron(`1 1 */${hourInterval} * * *`, async () => {
+    await routine()
+  })
 
-    console.log('Routine scheduled.')
+  console.log('Routine scheduled.')
 }
