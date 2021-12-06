@@ -18,45 +18,50 @@ const colors = [
 ]
 
 export async function sendAssignment(assignment: Assignment): Promise<void> {
-    const initialMessage = await sendMessage(`_ _\nStart of pages for ${assignment.date.toLocaleDateString('en', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    })} ⤵️`)
+    const bookPages = await getPages(assignment.range.start, assignment.range.stop)
 
-    for (const page of (await getPages(assignment.range.start, assignment.range.stop))) {
-        const body = page.parts.map(
-            (part: Part) => {
-                part.text = part.text.trim()
-                if (part.tag.startsWith('h')) {
-                    part.text = `\n\n***${part.text}***\n\n`
-                } else if (part.tag === 'b') {
-                    part.text = ` __**${part.text}**__ `
-                } else if (part.tag === 'i') {
-                    part.text = ` *${part.text}* `
+    let initialMessage = {id: '', 'channel_id': ''}
+
+    if (bookPages.length > 0) {
+        initialMessage = await sendMessage(`_ _\nStart of pages for ${assignment.date.toLocaleDateString('en', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        })} ⤵️`)
+
+        for (const page of bookPages) {
+            const body = page.parts.map(
+                (part: Part) => {
+                    part.text = part.text.trim()
+                    if (part.tag.startsWith('h')) {
+                        part.text = `\n\n***${part.text}***\n\n`
+                    } else if (part.tag === 'b') {
+                        part.text = ` __**${part.text}**__ `
+                    } else if (part.tag === 'i') {
+                        part.text = ` *${part.text}* `
+                    }
+                    return part
                 }
-                return part
+            ).map((part: Part) => {
+                return part.text
+            }).join('')
+
+
+            if (body.length > 0) {
+                await sendMessage([{
+                    title: `Page ${page.number}`,
+                    description: body.substring(0, 4096),
+                    color: colors[Math.floor(page.number % 10)]
+                }])
             }
-        ).map((part: Part) => {
-            return part.text
-        }).join('')
-
-        //console.log(body)
-
-        if (body.length > 0) {
-            await sendMessage([{
-                title: `Page ${page.number}`,
-                description: body.substring(0, 4096),
-                color: colors[Math.floor(page.number % 10)]
-            }])
-        }
-        if (body.length >= 4096) {
-            await sendMessage([{
-                title: '',
-                description: body.substring(4096, 8192),
-                color: colors[Math.floor(page.number % 10)]
-            }])
+            if (body.length >= 4096) {
+                await sendMessage([{
+                    title: '',
+                    description: body.substring(4096, 8192),
+                    color: colors[Math.floor(page.number % 10)]
+                }])
+            }
         }
     }
 
@@ -66,7 +71,7 @@ export async function sendAssignment(assignment: Assignment): Promise<void> {
         description: ''
             + (startAt ? `\n🏁 Start at __${startAt}__` : '')
             + (stopAt ? `\n🛑 Stop at __${stopAt}__` : '')
-            + `\n\n[Jump to start of pages ⤴️](https://discord.com/channels/${env.DISCORD_SERVER_ID}/${initialMessage.channel_id}/${initialMessage.id})`,
+            + (initialMessage.id ? `\n\n[Jump to start of pages ⤴️](https://discord.com/channels/${env.DISCORD_SERVER_ID}/${initialMessage.channel_id}/${initialMessage.id})` : ''),
         color: 0xFdFdFd,
         footer: {
             text: 'Notoadia',
@@ -77,10 +82,10 @@ export async function sendAssignment(assignment: Assignment): Promise<void> {
 }
 
 async function sendMessage(content: string | Embed[]): Promise<{ id: string, channel_id: string }> {
-    let baseBody = {
+    const baseBody = {
         // original: 'https://i.ibb.co/JmVV8Vf/notoadia.png'
         // pink: 'https://i.ibb.co/p0fhxVD/notoadia2.png'
-        avatar_url: 'https://i.ibb.co/JmVV8Vf/notoadia.png',
+        'avatar_url': 'https://i.ibb.co/JmVV8Vf/notoadia.png',
         tts: false,
         username: 'Notoadia',
         content: '',
