@@ -1,5 +1,5 @@
 import { Assignment } from './types.d.ts'
-import { fetchAssignments } from './api.ts'
+import { fetchAssignments } from './canvas.ts'
 
 export let cache: Assignment[] = []
 

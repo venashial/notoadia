@@ -1,5 +1,5 @@
 import { Assignment } from './types.d.ts'
-import { fetchAssignments } from './api.ts'
+import { fetchAssignments } from './canvas.ts'
 import { cache } from './cache.ts'
 import { sendAssignment } from './discord.ts'
 

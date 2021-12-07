@@ -57,7 +57,8 @@ export async function fetchAssignments(): Promise<Assignment[]> {
 
         const [start, stop] = description
           .match(/[0-9]{3}-[0-9]{3}/)?.[0]
-          .split('-') || ['', '']
+          .split('-')
+          .map((number) => parseInt(number)) || [0, 0]
 
         const stopAt = description
           .match(/stop at (.*?)(\.|$)/i)?.[0]
@@ -80,6 +81,10 @@ export async function fetchAssignments(): Promise<Assignment[]> {
           },
         }
       })
+      .filter(
+        (assignment: Assignment) =>
+          assignment.range.start > 0 && assignment.range.stop > 0
+      )
   } else {
     console.log('Could not fetch assignments.')
     return []
